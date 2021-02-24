@@ -1,0 +1,34 @@
+---
+resources:
+- name: git-story-branch
+  type: git
+  icon: github
+  source:
+    uri: https://github.com/carpeliam/git-story-branch.git
+- name: golang-1.13.x-image
+  type: registry-image
+  icon: docker
+  source:
+    repository: golang
+    tag: 1.13-stretch
+
+jobs:
+- name: job
+  public: true
+  plan:
+  - get: git-story-branch
+    trigger: true
+  - get: golang-1.13.x-image
+    trigger: true
+  - task: run-tests
+    image: golang-1.13.x-image
+    config:
+      inputs:
+        - name: git-story-branch
+      run:
+        path: /bin/sh
+        args: 
+          - -c
+          - |
+          cd ./git-story-branch/
+          ./run-tests.sh
